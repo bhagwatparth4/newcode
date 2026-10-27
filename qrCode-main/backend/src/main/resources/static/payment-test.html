@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Payment Test</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+
+<h2>Cafe Payment Test</h2>
+
+<button id="payButton">Pay ₹390</button>
+
+<script>
+
+    const orderId = 10;
+
+    async function startPayment() {
+
+        try {
+
+            // 1. Get/Create Razorpay order from our backend
+            const response = await fetch(
+                "http://localhost:8080/api/payments/razorpay/order",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to create payment order");
+            }
+
+            const data = await response.json();
+
+            console.log("Backend Payment Data:", data);
+
+            // 2. Razorpay Checkout configuration
+            const options = {
+
+                key: data.keyId,
+
+                amount: data.amount * 100,
+
+                currency: data.currency,
+
+                name: "My Cafe",
+
+                description: "Cafe Order " + data.orderNumber,
+
+                order_id: data.razorpayOrderId,
+
+                prefill: {
+                    name: "Krishna"
+                },
+
+                handler: async function (paymentResponse) {
+
+                    console.log(
+                        "Razorpay Payment Response:",
+                        paymentResponse
+                    );
+
+                    // 3. Send Razorpay response to backend
+                    const verifyResponse = await fetch(
+                        "http://localhost:8080/api/payments/razorpay/verify",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+
+                                orderId: data.orderId,
+
+                                razorpayOrderId:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpayPaymentId:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpaySignature:
+                                    paymentResponse.razorpay_signature
+                            })
+                        }
+                    );
+
+                    const verifyData =
+                        await verifyResponse.json();
+
+                    console.log(
+                        "Verification Response:",
+                        verifyData
+                    );
+
+                    if (verifyData.success) {
+
+                        alert(
+                            "Payment successful! Order: "
+                            + verifyData.orderNumber
+                        );
+
+                    } else {
+
+                        alert("Payment verification failed");
+                    }
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        console.log(
+                            "Razorpay Checkout closed"
+                        );
+                    }
+                },
+
+                theme: {
+                    color: "#000000"
+                }
+            };
+
+            // 4. Open Razorpay Checkout
+            const razorpay =
+                new Razorpay(options);
+
+            razorpay.open();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Something went wrong: "
+                + error.message
+            );
+        }
+    }
+
+    document
+        .getElementById("payButton")
+        .addEventListener(
+            "click",
+            startPayment
+        );
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/*
+ * BRAND TOKENS
+ * To re-brand for another client, change these colours (and the logo files
+ * in /public). Every screen uses these names, e.g. bg-espresso, text-mint.
+ */
+@theme {
+  --color-espresso: #2b211c;   /* main text, dark surfaces */
+  --color-roast: #4a3a30;      /* secondary dark */
+  --color-bronze: #9a7446;     /* hourglass frame, fine details */
+  --color-mint: #6fe0b0;       /* brand colour, primary actions */
+  --color-mint-deep: #1f8a5f;  /* mint text on light backgrounds */
+  --color-mist: #f2f8f4;       /* customer page background */
+  --color-paper: #fffdf8;      /* receipt paper */
+  --color-veg: #1b8a3a;
+  --color-nonveg: #b3261e;
+
+  --font-display: "Zilla Slab", Georgia, serif;
+  --font-sans: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-espresso);
+  background: var(--color-mist);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-mint-deep);
+  outline-offset: 2px;
+}
+
+/* ---------- Thermal printer receipt animation ---------- */
+
+.printer-body {
+  animation: printer-hum 0.12s linear infinite;
+}
+.printer-body.is-done {
+  animation: none;
+}
+@keyframes printer-hum {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(0.6px); }
+}
+
+.printer-led {
+  animation: led-blink 0.5s steps(2) infinite;
+}
+.printer-led.is-done {
+  animation: none;
+}
+@keyframes led-blink {
+  from { opacity: 1; }
+  to { opacity: 0.25; }
+}
+
+/* Paper feeds out in small mechanical steps, like a real thermal printer */
+.receipt-feed {
+  animation: receipt-feed 2.4s steps(28, end) forwards;
+}
+@keyframes receipt-feed {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+/* Torn/zig-zag bottom edge of receipt paper */
+.receipt-edge {
+  height: 10px;
+  background:
+    linear-gradient(135deg, var(--color-paper) 50%, transparent 50%) 0 0 / 12px 10px repeat-x,
+    linear-gradient(225deg, var(--color-paper) 50%, transparent 50%) 0 0 / 12px 10px repeat-x;
+}
+
+/* Bell alert slides in from the top */
+.alert-drop {
+  animation: alert-drop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+@keyframes alert-drop {
+  from { transform: translateY(-120%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Bottom sheet */
+.sheet-up {
+  animation: sheet-up 0.25s ease-out;
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Welcome screen: the logo coin gently tilts in 3D */
+.coin {
+  animation: coin-tilt 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+@keyframes coin-tilt {
+  0%, 100% { transform: perspective(700px) rotateY(-10deg) rotateX(4deg); }
+  50% { transform: perspective(700px) rotateY(10deg) rotateX(-3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .printer-body, .printer-led, .coin { animation: none; }
+  .receipt-feed { animation-duration: 0.01s; }
+  .alert-drop, .sheet-up { animation: none; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }

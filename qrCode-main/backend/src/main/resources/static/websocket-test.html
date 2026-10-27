@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Order WebSocket Test</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+</head>
+
+<body>
+
+<h2>Customer Order WebSocket Test</h2>
+
+<button onclick="connect()">Connect</button>
+
+<pre id="output"></pre>
+
+<script>
+
+    let stompClient = null;
+
+    const CUSTOMER_NOTIFICATION_TOKEN =
+        "ad9d690b-3ecc-4a5c-be7f-2e41b831087a";
+
+    function log(message) {
+        document.getElementById("output").textContent += message + "\n";
+    }
+
+    function connect() {
+
+        log("Connecting to WebSocket...");
+
+        stompClient = new StompJs.Client({
+
+            brokerURL: "ws://localhost:8080/ws",
+
+            onConnect: function () {
+
+                log("CONNECTED");
+
+                stompClient.subscribe(
+                    "/topic/customer/orders/" + CUSTOMER_NOTIFICATION_TOKEN,
+                    function (message) {
+
+                        log("CUSTOMER ORDER NOTIFICATION RECEIVED:");
+
+                        try {
+
+                            const notification = JSON.parse(message.body);
+
+                            log(JSON.stringify(notification, null, 2));
+
+                        } catch (error) {
+
+                            log(message.body);
+
+                        }
+                    }
+                );
+
+                log(
+                    "SUBSCRIBED TO /topic/customer/orders/"
+                    + CUSTOMER_NOTIFICATION_TOKEN
+                );
+            },
+
+            onStompError: function (frame) {
+
+                log("STOMP ERROR: " + frame.body);
+            },
+
+            onWebSocketError: function (error) {
+
+                log("WEBSOCKET ERROR: " + error);
+            },
+
+            onWebSocketClose: function () {
+
+                log("WEBSOCKET CONNECTION CLOSED");
+            }
+        });
+
+        stompClient.activate();
+    }
+
+</script>
+
+</body>
+</html>
