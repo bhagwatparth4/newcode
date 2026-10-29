@@ -29,7 +29,7 @@ if [[ -z "${PROJECT_DIR:-}" ]]; then
     if [[ -f "${d}/backend/pom.xml" ]]; then PROJECT_DIR="${d}"; break; fi
   done
 fi
-PROJECT_DIR="/root/newcode/qrCode-main"
+PROJECT_DIR="${PROJECT_DIR:-/root/newcode/qrCode-main}"
 # Optional file with your real secrets (KEY=VALUE per line). Applied on EVERY run.
 SECRETS_FILE="${SECRETS_FILE:-${SCRIPT_DIR}/cafeqr.secrets.env}"
 APP_NAME="cafeqr"
