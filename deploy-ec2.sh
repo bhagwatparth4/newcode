@@ -61,7 +61,7 @@ if [[ -z "${PUBLIC_URL:-}" ]]; then
             http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || true)"
   [[ -n "${PUBLIC_IP}" ]] || PUBLIC_IP="$(curl -fsS -m 5 https://checkip.amazonaws.com 2>/dev/null | tr -d '[:space:]' || true)"
   [[ -n "${PUBLIC_IP}" ]] || die "Could not detect public IP. Run with PUBLIC_URL=http://YOUR_IP"
-  PUBLIC_URL="http://${PUBLIC_IP}"
+  PUBLIC_URL="http://151.242.187.202"
 fi
 PUBLIC_URL="${PUBLIC_URL%/}"
 WS_URL="$(echo "${PUBLIC_URL}" | sed -E 's#^https#wss#; s#^http#ws#')/ws"
@@ -147,8 +147,8 @@ APP_TIMEZONE=Asia/Kolkata
 FRONTEND_URL=${PUBLIC_URL}
 
 # ---- Optional ----
-VAPID_PUBLIC_KEY=
-VAPID_PRIVATE_KEY=
+VAPID_PUBLIC_KEY= "B6GYMgmXwuihAc8RxDFrCSvYf4_YAlHU2zVxZAh0QsS37Hf0rSKhtr_2P3ppTxFBdtsB3tJz7kpoNfxHr1XAF0mo"
+VAPID_PRIVATE_KEY="xF-nhRLXAFdQiwaJtlUcg5s0m4ZE-haR1N50Wjn_A8Q"
 VAPID_SUBJECT=mailto:owner@example.com
 TWOFACTOR_API_KEY=
 TWOFACTOR_SMS_HEADER=
