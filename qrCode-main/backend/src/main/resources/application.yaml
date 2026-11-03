@@ -63,8 +63,8 @@
 
   web-push:
     # Optional. Leave empty to disable Web Push (ordering still works).
-    vapid-public-key: BPWMFAZUXu5baPGIZpT62vdi8ANNon3EtgD4K0GvZ8A1PMt-r_9FbX4PjcTeWi0Ikudz_VGX0026gkNkm5K7vPs
-    vapid-private-key: Y_sShYgceod FDY_boxC61wHBJrvhOfRbmNnr_QLBAS
+    vapid-public-key: BG6YmmqxwihAc8RxdFDcrsVYf4_YA1HUZ2vXzAhQ5s37Hf0rSWhtr_2P3ppTxFBdtsB3tJz7kpoNfxHr1XAF0mo
+    vapid-private-key: xF-nhRLXAFdQ1waJtlUcg5s0m4ZE-haR1N5OWjn_A8Q
     vapid-subject: app.rushhourscafe.in
 
 
